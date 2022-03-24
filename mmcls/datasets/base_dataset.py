@@ -119,7 +119,9 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                  metric='accuracy',
                  metric_options=None,
                  indices=None,
-                 logger=None):
+                 logger=None,
+                 multi_task=False,
+                 task_idx=None):
         """Evaluate the dataset.
 
         Args:
@@ -133,9 +135,39 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                 the results. Defaults to None.
             logger (logging.Logger | str, optional): Logger used for printing
                 related information during evaluation. Defaults to None.
+            multi_task (bool): Whether to evaluate metrics in a multi-task
+                manner or not.
+            task_idx (int): Current task index. If specified, `multi_task`
+                should be False because this function will be called
+                recursively. See the code below.
         Returns:
             dict: evaluation results
         """
+        # Handle multi-task metrics by calling this function recursively.
+        if multi_task:
+            num_tasks = len(self.CLASSES)
+            all_evaluation_results = dict()
+            for i in range(num_tasks):
+                evaluation_results = self.evaluate(
+                    results=results,
+                    metric=metric,
+                    metric_options=metric_options,
+                    indices=indices,
+                    logger=logger,
+                    multi_task=False,
+                    task_idx=i,
+                )
+                evaluation_results = {
+                    f"{k}_{i}": v for k, v in evaluation_results.items()
+                }
+                all_evaluation_results.update(evaluation_results)
+            return all_evaluation_results
+
+        # One recursion
+        if task_idx is not None:
+            assert not multi_task
+            results = [res[task_idx] for res in results]
+
         if metric_options is None:
             metric_options = {'topk': (1, 5)}
         if isinstance(metric, str):
@@ -148,6 +180,8 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         eval_results = {}
         results = np.vstack(results)
         gt_labels = self.get_gt_labels()
+        if task_idx is not None:
+            gt_labels = gt_labels[:, task_idx]
         if indices is not None:
             gt_labels = gt_labels[indices]
         num_imgs = len(results)
