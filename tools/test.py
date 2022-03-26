@@ -188,17 +188,24 @@ def main():
         results = {}
         logger = get_root_logger()
         if args.metrics:
+            add_dict = {}
+            if cfg.evaluation.get("multi_task"):
+                add_dict.update({"multi_task": cfg.evaluation.multi_task})
             eval_results = dataset.evaluate(
                 results=outputs,
                 metric=args.metrics,
                 metric_options=args.metric_options,
-                logger=logger)
+                logger=logger,
+                **add_dict,
+            )
             results.update(eval_results)
             for k, v in eval_results.items():
                 if isinstance(v, np.ndarray):
                     v = [round(out, 2) for out in v.tolist()]
                 elif isinstance(v, Number):
                     v = round(v, 2)
+                elif isinstance(v, list):  # confusion matrix
+                    pass
                 else:
                     raise ValueError(f'Unsupport metric type: {type(v)}')
                 print(f'\n{k} : {v}')
