@@ -1,4 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from .acdc_dataset import ACDCDataset
 from .base_dataset import BaseDataset
 from .builder import (DATASETS, PIPELINES, SAMPLERS, build_dataloader,
                       build_dataset, build_sampler)
@@ -18,5 +19,6 @@ __all__ = [
     'VOC', 'MultiLabelDataset', 'build_dataloader', 'build_dataset',
     'DistributedSampler', 'ConcatDataset', 'RepeatDataset',
     'ClassBalancedDataset', 'DATASETS', 'PIPELINES', 'ImageNet21k', 'SAMPLERS',
-    'build_sampler', 'RepeatAugSampler', 'KFoldDataset', 'WeatherDataset'
+    'build_sampler', 'RepeatAugSampler', 'KFoldDataset', 'WeatherDataset',
+    'ACDCDataset'
 ]

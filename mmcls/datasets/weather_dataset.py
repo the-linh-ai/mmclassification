@@ -3,7 +3,6 @@ import os
 
 import numpy as np
 import pandas as pd
-from PIL import Image
 
 from .base_dataset import BaseDataset
 from .builder import DATASETS
