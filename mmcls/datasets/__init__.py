@@ -11,6 +11,7 @@ from .imagenet21k import ImageNet21k
 from .mnist import MNIST, FashionMNIST
 from .multi_label import MultiLabelDataset
 from .samplers import DistributedSampler, RepeatAugSampler
+from .test_dataset import TestDataset
 from .voc import VOC
 from .weather_dataset import WeatherDataset
 
@@ -20,5 +21,5 @@ __all__ = [
     'DistributedSampler', 'ConcatDataset', 'RepeatDataset',
     'ClassBalancedDataset', 'DATASETS', 'PIPELINES', 'ImageNet21k', 'SAMPLERS',
     'build_sampler', 'RepeatAugSampler', 'KFoldDataset', 'WeatherDataset',
-    'ACDCDataset'
+    'ACDCDataset', 'TestDataset'
 ]
